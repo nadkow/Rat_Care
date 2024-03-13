@@ -1,0 +1,6 @@
+cmake
+cmake-build-debug
+.idea
+res/models
+res/textures
+thirdparty
