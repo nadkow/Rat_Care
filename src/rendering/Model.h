@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include "Mesh.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#include "rendering/Mesh.h"
 #include "Shader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -166,9 +166,9 @@ public:
     std::string directory;
     bool gammaCorrection;
 
-    Model(){}
+    Model() = default;
 
-    Model(std::filesystem::path path, bool gamma = false) : gammaCorrection(gamma)
+    explicit Model(const std::filesystem::path& path, bool gamma = false) : gammaCorrection(gamma)
     {
         loadModel(path);
     }

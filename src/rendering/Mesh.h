@@ -1,7 +1,7 @@
 #ifndef OPENGLGP_MESH_H
 #define OPENGLGP_MESH_H
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include <string>
 #include <vector>
 #include "Shader.h"

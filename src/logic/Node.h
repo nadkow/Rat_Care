@@ -1,11 +1,11 @@
 #ifndef OPENGLGP_NODE_H
 #define OPENGLGP_NODE_H
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 class Node {
 public:

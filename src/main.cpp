@@ -17,9 +17,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include "Node.h"
-#include "Model.h"
-#include "Shader.h"
+#include "logic/Node.h"
+#include "rendering/Model.h"
+#include "rendering/Shader.h"
+#include "logic/RatManager.h"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -139,11 +140,6 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-Node sceneNode;
-Node ratNode;
-const glm::mat4 defaultSceneRotation = glm::rotate(glm::mat4(1.f), .2f, glm::vec3(0, 1, 0));
-const glm::mat4 defaultSceneRotationNeg = glm::rotate(glm::mat4(1.f), -.2f, glm::vec3(0, 1, 0));
-
 bool firstMouse = true;
 uint8_t cursorMode = 1;
 int cursorModes[2] = {GLFW_CURSOR_DISABLED, GLFW_CURSOR_NORMAL};
@@ -152,8 +148,7 @@ float deltaTime = 0.0f;  // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 float currentFrame;
 
-Shader ratShader;
-Model ratModel;
+RatManager ratManager;
 
 int main(int, char **) {
     if (!init()) {
@@ -183,11 +178,8 @@ int main(int, char **) {
 
     // Shader reflectShader("res/shaders/basic.vert", "res/shaders/reflect.frag");
     // Shader refractShader("res/shaders/basic.vert", "res/shaders/refract.frag");
-    ratShader = Shader("res/shaders/model.vert", "res/shaders/model.frag");
-
-    ratModel = Model(std::filesystem::absolute("res/models/rat/rat.obj"));
-
-    sceneNode.addChild(&ratNode);
+    ratManager.init();
+    ratManager.createRat("moomoo");
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -314,8 +306,8 @@ void create_textures() {
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
-        firstMouse = true;
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        ratManager.createRat("peepee");
     }
 }
 
@@ -385,13 +377,9 @@ void input() {
 
     // rotate scene
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        sceneNode.rotate(defaultSceneRotation);
-        ratShader.use();
-        ratShader.setMat4("transform", sceneNode.getTransform());
+        ratManager.rotateRootLeft();
     } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        sceneNode.rotate(defaultSceneRotationNeg);
-        ratShader.use();
-        ratShader.setMat4("transform", sceneNode.getTransform());
+        ratManager.rotateRootRight();
     }
 }
 
@@ -399,11 +387,6 @@ void update() {
     glUseProgram(cubemapProgram);
     int projLoc = glGetUniformLocation(cubemapProgram, "projection");
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-    ratShader.use();
-    ratShader.setMat4("view", view);
-    ratShader.setMat4("projection", projection);
-    ratShader.setMat4("transform", ratNode.getTransform());
 }
 
 void render() {
@@ -419,9 +402,7 @@ void render() {
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthMask(GL_TRUE);
 
-    // draw rat
-    ratShader.use();
-    ratModel.Draw(ratShader);
+    ratManager.draw();
 }
 
 void imgui_begin() {

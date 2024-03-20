@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include "glm/glm.hpp"
 #include <stdio.h>
 #include <fstream>
@@ -13,7 +13,7 @@ class Shader
 public:
     unsigned int ID;
 
-    Shader() {};
+    Shader() = default;
 
     Shader(const char* vertexPath, const char* fragmentPath)
     {
