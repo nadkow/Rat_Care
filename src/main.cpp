@@ -21,6 +21,7 @@
 #include "rendering/Model.h"
 #include "rendering/Shader.h"
 #include "logic/RatManager.h"
+#include "rendering/Skybox.h"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -33,27 +34,11 @@ static void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-std::string load_shader_from_file(const std::string &filename) {
-    std::string result, line;
-    std::ifstream shaderFile(filename);
-    while (getline(shaderFile, line)) {
-        result += line + "\n";
-    }
-    shaderFile.close();
-    return result;
-}
-
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 bool init();
 
 void init_imgui();
-
-void load_shaders();
-
-void create_textures();
-
-void init_buffer_objects();
 
 void input();
 
@@ -84,56 +69,6 @@ bool show_demo_window = true;
 bool show_another_window = false;
 ImVec4 clear_color = ImVec4(0.45f, 0.25f, 0.20f, 1.00f);
 
-float skyboxVertices[] = {
-        -1.0f, 1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, 1.0f, -1.0f,
-        -1.0f, 1.0f, -1.0f,
-
-        -1.0f, -1.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, 1.0f, -1.0f,
-        -1.0f, 1.0f, -1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f,
-
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f,
-
-        -1.0f, 1.0f, -1.0f,
-        1.0f, 1.0f, -1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f
-};
-
-unsigned int skyTex;
-unsigned int cubemapVAO, cubemapVBO, cubemapProgram;
-std::string sky_faces[] = {"res/textures/sky_r.png", "res/textures/sky_l.png",
-                           "res/textures/sky_top.png", "res/textures/sky_bot.png",
-                           "res/textures/sky_b.png", "res/textures/sky_f.png"};
-
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.5f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -162,14 +97,7 @@ int main(int, char **) {
 
     glfwSetInputMode(window, GLFW_CURSOR, cursorModes[1]);
 
-    create_textures();
-    init_buffer_objects();
-    load_shaders();
-
-    glUseProgram(cubemapProgram);
-    int viewLoc = glGetUniformLocation(cubemapProgram, "view");
-    glm::mat4 cubeview = glm::mat4(glm::mat3(view));
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(cubeview));
+    init_skybox();
 
     glfwSetKeyCallback(window, key_callback);
 
@@ -191,7 +119,7 @@ int main(int, char **) {
         input();
 
         // Update game objects' state here
-        update();
+        //update();
 
         // OpenGL rendering code here
         render();
@@ -284,91 +212,10 @@ void init_imgui() {
     //IM_ASSERT(font != NULL);
 }
 
-void create_textures() {
-
-    glGenTextures(1, &skyTex);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skyTex);
-
-    int width, height, nrChannels;
-    unsigned char *data;
-
-    for (unsigned int i = 0; i < 6; i++) {
-        data = stbi_load(sky_faces[i].c_str(), &width, &height, &nrChannels, 0);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        stbi_image_free(data);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-}
-
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         ratManager.createRat("peepee");
     }
-}
-
-void load_shaders() {
-    int success;
-    char infoLog[512];
-
-    //instancing shader program
-    unsigned int vertexShaderI, fragmentShaderI;
-    std::string vssi = load_shader_from_file("res/shaders/cubemap.vert");
-    const char *vertexShaderSourceI = vssi.c_str();
-    vertexShaderI = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShaderI, 1, &vertexShaderSourceI, NULL);
-    glCompileShader(vertexShaderI);
-
-    glGetShaderiv(vertexShaderI, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShaderI, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADERC::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    std::string fssi = load_shader_from_file("res/shaders/cubemap.frag");
-    const char *fragmentShaderSourceI = fssi.c_str();
-    fragmentShaderI = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShaderI, 1, &fragmentShaderSourceI, NULL);
-    glCompileShader(fragmentShaderI);
-
-    glGetShaderiv(fragmentShaderI, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShaderI, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADERC::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    cubemapProgram = glCreateProgram();
-    glAttachShader(cubemapProgram, vertexShaderI);
-    glAttachShader(cubemapProgram, fragmentShaderI);
-    glLinkProgram(cubemapProgram);
-
-    glDeleteShader(vertexShaderI);
-    glDeleteShader(fragmentShaderI);
-
-    glGetProgramiv(cubemapProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(cubemapProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::PROGRAMC::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-}
-
-void init_buffer_objects() {
-    // generate VAO
-    glGenVertexArrays(1, &cubemapVAO);
-    // bind VAO (use it)
-    glBindVertexArray(cubemapVAO);
-    // generate coordVBO
-    glGenBuffers(1, &cubemapVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubemapVBO);
-    // copy vertex data to vbo
-    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
-    // set vertex attributes pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
-    glEnableVertexAttribArray(0);
 }
 
 void input() {
@@ -383,25 +230,15 @@ void input() {
     }
 }
 
-void update() {
-    glUseProgram(cubemapProgram);
-    int projLoc = glGetUniformLocation(cubemapProgram, "projection");
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-}
+void update() {}
 
 void render() {
     // clear
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // draw cubemap
-    glDepthMask(GL_FALSE);
-    glUseProgram(cubemapProgram);
-    glBindVertexArray(cubemapVAO);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skyTex);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthMask(GL_TRUE);
-
+    draw_skybox();
+    // draw all rats
     ratManager.draw();
 }
 
