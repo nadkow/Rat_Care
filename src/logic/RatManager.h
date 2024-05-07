@@ -6,13 +6,17 @@ Node rootNode;
 const glm::mat4 defaultSceneRotation = glm::rotate(glm::mat4(1.f), .2f, glm::vec3(0, 1, 0));
 const glm::mat4 defaultSceneRotationNeg = glm::rotate(glm::mat4(1.f), -.2f, glm::vec3(0, 1, 0));
 extern glm::mat4 view, projection;
+const int noOfTexs = 5;
+const std::string texFiles[] = {"rat", "rat2", "rat3", "rat4", "rat5"};
 
 #include "Rat.h"
 
 
 class RatManager {
 public:
-    RatManager() = default;
+    RatManager() {
+        srand(time(nullptr)); // move to main if needed
+    };
 
     void init() {
         ratShader = Shader("res/shaders/model.vert", "res/shaders/model.frag");
@@ -22,7 +26,10 @@ public:
 
     void createRat(const std::string& name) {
         Node baseNode(glm::rotate(glm::mat4(1.f), (float) glfwGetTime(), {0, 1, 0}));
-        children.emplace_back(name, baseNode);
+        std::string filename = "res/models/rat/";
+        filename.append(texFiles[rand()%noOfTexs]);
+        filename.append(".obj");
+        children.emplace_back(name, baseNode, filename);
     }
 
     void draw() {

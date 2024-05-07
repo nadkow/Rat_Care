@@ -6,9 +6,9 @@
 
 class Rat {
 public:
-    explicit Rat(std::string name, Node node) : name(std::move(name)), ratNode(std::move(node)) {
+    explicit Rat(std::string name, Node node, std::string filename) : name(std::move(name)), ratNode(std::move(node)), texFilename(std::move(filename)) {
         rootNode.addChild(&ratNode);
-        ratModel = Model(std::filesystem::absolute("res/models/rat/rat.obj"));
+        ratModel = Model(std::filesystem::absolute(texFilename));
     }
     Rat() = default;
 
@@ -18,6 +18,7 @@ public:
     }
 private:
     std::string name;
+    std::string texFilename;
     Model ratModel;
     Node ratNode;
 };
