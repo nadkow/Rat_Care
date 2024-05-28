@@ -18,7 +18,7 @@ public:
         srand(time(nullptr)); // move to main if needed
     };
 
-    void init() {
+    void init(int hour) {
         ratShader = Shader("res/shaders/model.vert", "res/shaders/model.frag");
         ratShader.use();
         ratShader.setMat4("view", view);

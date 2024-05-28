@@ -47,9 +47,9 @@ float skyboxVertices[] = {
 unsigned int skyTex;
 unsigned int cubemapVAO, cubemapVBO;
 Shader cubemapShader;
-std::string sky_faces[] = {"res/textures/sky_r.png", "res/textures/sky_l.png",
-                           "res/textures/sky_top.png", "res/textures/sky_bot.png",
-                           "res/textures/sky_b.png", "res/textures/sky_f.png"};
+std::string sky_faces[] = {"res/textures/skybox/xpos.png", "res/textures/skybox/xneg.png",
+                           "res/textures/skybox/ypos.png", "res/textures/skybox/yneg.png",
+                           "res/textures/skybox/zpos.png", "res/textures/skybox/zneg.png"};
 
 void create_textures() {
     glGenTextures(1, &skyTex);
@@ -86,10 +86,16 @@ void init_buffer_objects() {
     glEnableVertexAttribArray(0);
 }
 
-void init_skybox() {
+void init_skybox(int hour) {
+
     cubemapShader = Shader("res/shaders/cubemap.vert", "res/shaders/cubemap.frag");
     cubemapShader.use();
     cubemapShader.setMat4("view", glm::mat4(glm::mat3(view)));
+
+    double brightness = glm::sin(hour/8.0);
+    spdlog::info("brightness {}", brightness);
+    glm::vec4 skycolor = glm::vec4(brightness, brightness, .99, 1.0);
+    cubemapShader.setVec4("skycolor", skycolor);
 
     create_textures();
     init_buffer_objects();
