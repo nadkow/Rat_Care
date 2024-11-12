@@ -86,6 +86,10 @@ public:
         transf = trans_mat;
     }
 
+    void translate(double x, double y, double z) {
+        transf = glm::translate(transf, {x, y, z});
+    }
+
     void transformChild(int idx, glm::mat4 trans_mat) {
         children[idx]->transform(trans_mat);
     }

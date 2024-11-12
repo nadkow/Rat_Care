@@ -13,6 +13,7 @@ public:
     Rat() = default;
 
     void draw() {
+        // try buffer object orphaning
         ratShader.setMat4("transform", ratNode.getTransform());
         ratModel.Draw(ratShader);
     }
