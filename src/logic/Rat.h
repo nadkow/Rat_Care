@@ -17,6 +17,21 @@ public:
         ratShader.setMat4("transform", ratNode.getTransform());
         ratModel.Draw(ratShader);
     }
+
+    void save() {
+        // save rat to individual file
+        std::ofstream ratfile;
+        std::string ratFilename = name;
+        //ratFilename.append(".txt");
+        ratfile.open(ratFilename, std::ios::trunc);
+        ratfile << texFilename << std::endl;
+        ratfile.close();
+    }
+
+    std::string get_name() {
+        return name;
+    }
+
 private:
     std::string name;
     std::string texFilename;

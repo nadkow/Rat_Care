@@ -34,6 +34,20 @@ public:
         filename.append(texFiles[rand()%noOfTexs]);
         filename.append(".obj");
         children.emplace_back(name, baseNode, filename);
+        std::string msg = "Rat ";
+        msg.append(name);
+        msg.append(" created!");
+        spdlog::info(msg);
+    }
+
+    void createRat(const std::string& name, const std::string& tex) {
+        Node baseNode(glm::rotate(glm::mat4(1.f), (float) glfwGetTime(), {0, 1, 0}));
+        baseNode.translate(dist(rnd) * cage.half_xsize, .0, dist(rnd) * cage.half_zsize);
+        children.emplace_back(name, baseNode, tex);
+        std::string msg = "Rat ";
+        msg.append(name);
+        msg.append(" created!");
+        spdlog::info(msg);
     }
 
     void draw() {
@@ -58,6 +72,37 @@ public:
         ratShader.use();
         ratShader.setMat4("transform", rootNode.getTransform());
     }
+
+    void saveRats() {
+        std::ofstream allfile;
+        // TODO change file extension, txt is for debug purposes
+        allfile.open("all.txt", std::ios::trunc);
+        for (auto child : children) {
+            child.save();
+            allfile << child.get_name() << std::endl;
+        }
+        allfile.close();
+    }
+
+    void loadRats() {
+        std::ifstream allfile;
+        allfile.open("all.txt", std::ios::in);
+        std::string ratname, rattex;
+        std::ifstream ratfile;
+        // this does not read the empty line at the end of file
+        while (getline(allfile, ratname)) {
+            // output name form allfile
+            spdlog::info("Reading rat from file:");
+            std::cout << ratname << std::endl;
+            // read from individual file
+            ratfile.open(ratname, std::ios::in);
+            getline(ratfile, rattex);
+            createRat(ratname, rattex);
+            ratfile.close();
+        }
+        allfile.close();
+    }
+
 private:
     Cage &cage;
     std::vector<Rat> children;

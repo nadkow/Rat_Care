@@ -22,7 +22,7 @@
     - [ ] holds cage objects
 - [ ] file i/o
     - [ ] save rat status upon exit (stats)
-    - [ ] save rat pack
+    - [x] save rat pack
     - [ ] save no of points
     - [ ] save cage status (objects)
 - [ ] Display tooltip with rat's name when hovering over it (designated "grab mode")

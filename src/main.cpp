@@ -114,7 +114,8 @@ int main(int, char **) {
     // Shader reflectShader("res/shaders/basic.vert", "res/shaders/reflect.frag");
     // Shader refractShader("res/shaders/basic.vert", "res/shaders/refract.frag");
     ratManager.init(timeinfo->tm_hour);
-    ratManager.createRat("moomoo");
+    //ratManager.createRat("moomoo");
+    ratManager.loadRats();
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -139,6 +140,9 @@ int main(int, char **) {
         // End frame and swap buffers (double buffering)
         end_frame();
     }
+
+    // Save game
+    ratManager.saveRats();
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
