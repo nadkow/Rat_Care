@@ -68,7 +68,7 @@ constexpr int32_t GL_VERSION_MINOR = 6;
 
 bool show_demo_window = true;
 bool show_another_window = false;
-ImVec4 clear_color = ImVec4(0.45f, 0.25f, 0.20f, 1.00f);
+ImVec4 clear_color = ImVec4(0.45f, 0.25f, 0.20f, 1.f);
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 3.f, 10.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, -3.0f, -10.0f);
@@ -110,6 +110,7 @@ int main(int, char **) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 
     // Shader reflectShader("res/shaders/basic.vert", "res/shaders/reflect.frag");
     // Shader refractShader("res/shaders/basic.vert", "res/shaders/refract.frag");
@@ -243,7 +244,6 @@ void update() {}
 
 void render() {
     // clear
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     draw_skybox();

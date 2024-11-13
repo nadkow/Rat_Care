@@ -25,11 +25,12 @@ public:
         ratShader = Shader("res/shaders/model.vert", "res/shaders/model.frag");
         ratShader.use();
         ratShader.setMat4("view", view);
+        cage.init();
     }
 
     void createRat(const std::string& name) {
         Node baseNode(glm::rotate(glm::mat4(1.f), (float) glfwGetTime(), {0, 1, 0}));
-        baseNode.translate(dist(rnd) * cage.half_xsize, .0, dist(rnd) * cage.half_zsize);
+        baseNode.translate(dist(rnd) * xsize, .0, dist(rnd) * zsize);
         std::string filename = "res/models/rat/";
         filename.append(texFiles[rand()%noOfTexs]);
         filename.append(".obj");
@@ -42,7 +43,7 @@ public:
 
     void createRat(const std::string& name, const std::string& tex) {
         Node baseNode(glm::rotate(glm::mat4(1.f), (float) glfwGetTime(), {0, 1, 0}));
-        baseNode.translate(dist(rnd) * cage.half_xsize, .0, dist(rnd) * cage.half_zsize);
+        baseNode.translate(dist(rnd) * xsize, .0, dist(rnd) * zsize);
         children.emplace_back(name, baseNode, tex);
         std::string msg = "Rat ";
         msg.append(name);
