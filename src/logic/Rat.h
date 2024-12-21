@@ -18,11 +18,14 @@ public:
         ratModel.Draw(ratShader);
     }
 
+    void update() {
+        
+    }
+
     void save() {
         // save rat to individual file
         std::ofstream ratfile;
         std::string ratFilename = name;
-        //ratFilename.append(".txt");
         ratfile.open(ratFilename, std::ios::trunc);
         ratfile << texFilename << std::endl;
         ratfile.close();
@@ -33,6 +36,8 @@ public:
     }
 
 private:
+    int hunger = 0;
+    int happiness = 0;
     std::string name;
     std::string texFilename;
     Model ratModel;

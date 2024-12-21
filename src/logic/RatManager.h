@@ -8,6 +8,7 @@ const glm::mat4 defaultSceneRotationNeg = glm::rotate(glm::mat4(1.f), -.2f, glm:
 extern glm::mat4 view, projection;
 const int noOfTexs = 5;
 const std::string texFiles[] = {"rat", "rat2", "rat3", "rat4", "rat5"};
+const char allRatFilename[] = "all";
 
 #include "Rat.h"
 #include "Cage.h"
@@ -62,6 +63,12 @@ public:
         cage.draw();
     }
 
+    void update() {
+        for (auto child : children) {
+            child.update();
+        }
+    }
+
     void rotateRootLeft() {
         rootNode.rotate(defaultSceneRotationNeg);
         ratShader.use();
@@ -76,8 +83,7 @@ public:
 
     void saveRats() {
         std::ofstream allfile;
-        // TODO change file extension, txt is for debug purposes
-        allfile.open("all.txt", std::ios::trunc);
+        allfile.open(allRatFilename, std::ios::trunc);
         for (auto child : children) {
             child.save();
             allfile << child.get_name() << std::endl;
@@ -87,14 +93,13 @@ public:
 
     void loadRats() {
         std::ifstream allfile;
-        allfile.open("all.txt", std::ios::in);
+        allfile.open(allRatFilename, std::ios::in);
         std::string ratname, rattex;
         std::ifstream ratfile;
         // this does not read the empty line at the end of file
         while (getline(allfile, ratname)) {
             // output name form allfile
-            spdlog::info("Reading rat from file:");
-            std::cout << ratname << std::endl;
+            spdlog::info("Reading rat from file: {}", ratname);
             // read from individual file
             ratfile.open(ratname, std::ios::in);
             getline(ratfile, rattex);

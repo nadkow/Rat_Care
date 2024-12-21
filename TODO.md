@@ -4,21 +4,19 @@
     - [x] rat's name
     - [x] rat's texture
     - [x] draw function
+    - [ ] rat interacts with cage objects every day (food and happiness)
+    - [ ] rat interacts with other rats every day (happiness gain)
     - [ ] implement RatState abstract class and it's children for state machine
     - [ ] rat moves inside cage
     - [ ] happiness meter
     - [ ] rat has sleep schedule
       - [ ] emit particles when asleep 
 - [ ] Implement RatManager class
-    - [x] creates new rats
-    - [x] draws all rats
     - [x] randomizes rat texture
     - [ ] common and rare skins for rats
-    - [x] spawn rats inside cage
-        - [ ] correct scale
 - [ ] Implement Cage class
     - [x] cage boundaries
-    - [ ] bedding texture
+    - [x] bedding texture
     - [ ] holds cage objects
 - [ ] file i/o
     - [ ] save rat status upon exit (stats)
@@ -26,4 +24,9 @@
     - [ ] save no of points
     - [ ] save cage status (objects)
 - [ ] Display tooltip with rat's name when hovering over it (designated "grab mode")
-- [x] Time-dependent skybox
+- [ ] Point management
+- [ ] Objects
+    - [ ] abstract object class
+    - [ ] food class
+    - [ ] toy class
+    - [ ] decor class

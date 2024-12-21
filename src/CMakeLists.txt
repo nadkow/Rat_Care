@@ -24,7 +24,8 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
         logic/RatManager.h
 		rendering/Skybox.h
         logic/Cage.h
-		logic/Object.h)
+		logic/Object.h
+        logic/TimeManager.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

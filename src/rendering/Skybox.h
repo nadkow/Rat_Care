@@ -93,7 +93,7 @@ void init_skybox(int hour) {
     cubemapShader.setMat4("view", glm::mat4(glm::mat3(view)));
 
     double brightness = glm::sin(hour/8.0);
-    spdlog::info("brightness {}", brightness);
+    spdlog::info("Sky brightness: {}", brightness);
     glm::vec4 skycolor = glm::vec4(brightness, brightness, .99, 1.0);
     cubemapShader.setVec4("skycolor", skycolor);
 

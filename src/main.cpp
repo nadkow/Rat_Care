@@ -22,6 +22,7 @@
 #include "rendering/Model.h"
 #include "rendering/Shader.h"
 #include "logic/RatManager.h"
+#include "logic/TimeManager.h"
 #include "rendering/Skybox.h"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
@@ -88,24 +89,20 @@ Cage cage;
 RatManager ratManager(cage);
 
 int main(int, char **) {
+
     if (!init()) {
         spdlog::error("Failed to initialize project!");
         return EXIT_FAILURE;
     }
-    time_t rawtime;
-    struct tm * timeinfo;
-    time (&rawtime);
-    timeinfo = localtime(&rawtime);
-
     spdlog::info("Initialized project.");
 
     init_imgui();
     spdlog::info("Initialized ImGui.");
 
+    dtm::init();
+    init_skybox(dtm::hour);
+
     glfwSetInputMode(window, GLFW_CURSOR, cursorModes[1]);
-
-    init_skybox(timeinfo->tm_hour);
-
     glfwSetKeyCallback(window, key_callback);
 
     glEnable(GL_DEPTH_TEST);
@@ -114,7 +111,7 @@ int main(int, char **) {
 
     // Shader reflectShader("res/shaders/basic.vert", "res/shaders/reflect.frag");
     // Shader refractShader("res/shaders/basic.vert", "res/shaders/refract.frag");
-    ratManager.init(timeinfo->tm_hour);
+    ratManager.init(dtm::hour);
     //ratManager.createRat("moomoo");
     ratManager.loadRats();
 
@@ -240,14 +237,17 @@ void input() {
     }
 }
 
-void update() {}
+void update() {
+
+    ratManager.update();
+}
 
 void render() {
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     draw_skybox();
-    // draw all rats
+    // draw all rats and cage
     ratManager.draw();
 }
 

@@ -72,10 +72,13 @@ public:
         glBindVertexArray(groundVAO);
         glBindTexture(GL_TEXTURE_2D, groundTexture);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+        for (auto child : objects) {
+            child.draw();
+        }
     }
 
 private:
-    std::vector<cage_object> objects;
+    std::vector<Cage> objects;
     unsigned int groundVAO, groundVBO;
     unsigned int groundTexture;
 };
