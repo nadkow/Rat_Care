@@ -28,6 +28,7 @@ constexpr int32_t GL_VERSION_MINOR = 6;
 #include "logic/RatManager.h"
 #include "logic/TimeManager.h"
 #include "rendering/Skybox.h"
+#include "logic/PointManager.h"
 #include "rendering/GuiManager.h"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
@@ -60,9 +61,10 @@ RatManager ratManager(cage);
 
 int main(int, char **) {
 
-    if (gui::init()) return EXIT_FAILURE;;
+    if (gui::init()) return EXIT_FAILURE;
     dtm::init();
     init_skybox(dtm::hour);
+    pm::load();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -94,6 +96,8 @@ int main(int, char **) {
 
     // Save game
     ratManager.saveRats();
+    dtm::save();
+    pm::save();
     gui::terminate();
 
     return 0;
