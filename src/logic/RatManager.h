@@ -9,6 +9,7 @@ extern glm::mat4 view, projection;
 const int noOfTexs = 5;
 const std::string texFiles[] = {"rat", "rat2", "rat3", "rat4", "rat5"};
 const char allRatFilename[] = "all";
+const int default_hp = 100;
 
 #include "Rat.h"
 #include "Cage.h"
@@ -16,17 +17,24 @@ const char allRatFilename[] = "all";
 
 class RatManager {
 public:
-    RatManager(Cage &cage) : cage(cage) {
+    RatManager(Cage* cage) : cage(cage) {
         srand(time(nullptr)); // move to main if needed
         rnd = std::default_random_engine{std::random_device{}()};
         dist = (std::uniform_real_distribution<double>(-1., 1.));
     };
 
-    void init(int hour) {
+    void init(bool isNewDay) {
         ratShader = Shader("res/shaders/model.vert", "res/shaders/model.frag");
         ratShader.use();
         ratShader.setMat4("view", view);
-        cage.init();
+        cage->init();
+
+        if (isNewDay) {
+            for (auto child : children) {
+                child->beginDay();
+                feed(child);
+            }
+        }
     }
 
     void createRat(const std::string& name) {
@@ -35,17 +43,20 @@ public:
         std::string filename = "res/models/rat/";
         filename.append(texFiles[rand()%noOfTexs]);
         filename.append(".obj");
-        children.emplace_back(name, baseNode, filename);
+        Rat* rat = new Rat(name, baseNode, filename);
+        children.push_back(rat);
         std::string msg = "Rat ";
         msg.append(name);
         msg.append(" created!");
         spdlog::info(msg);
     }
 
-    void createRat(const std::string& name, const std::string& tex) {
+    void createRat(const std::string& name, const std::string& tex, int hunger) {
         Node baseNode(glm::rotate(glm::mat4(1.f), (float) glfwGetTime(), {0, 1, 0}));
         baseNode.translate(dist(rnd) * xsize, .0, dist(rnd) * zsize);
-        children.emplace_back(name, baseNode, tex);
+        Rat* rat = new Rat(name, baseNode, tex);
+        rat->hunger = hunger;
+        children.push_back(rat);
         std::string msg = "Rat ";
         msg.append(name);
         msg.append(" created!");
@@ -58,14 +69,14 @@ public:
         // TODO probably not necessary to update each frame
         ratShader.setMat4("projection", projection);
         for (auto child : children) {
-            child.draw();
+            child->draw();
         }
-        cage.draw();
+        cage->draw();
     }
 
     void update() {
         for (auto child : children) {
-            child.update();
+            child->update();
         }
     }
 
@@ -85,8 +96,8 @@ public:
         std::ofstream allfile;
         allfile.open(allRatFilename, std::ios::trunc);
         for (auto child : children) {
-            child.save();
-            allfile << child.get_name() << std::endl;
+            child->save();
+            allfile << child->get_name() << std::endl;
         }
         allfile.close();
     }
@@ -103,17 +114,30 @@ public:
             // read from individual file
             ratfile.open(ratname, std::ios::in);
             getline(ratfile, rattex);
-            createRat(ratname, rattex);
+            std::string hpstr;
+            getline(ratfile, hpstr);
+            int hp;
+            try {
+                hp = std::stoi(hpstr);
+            } catch (std::invalid_argument &exc) {
+                hp = default_hp;
+            }
+            createRat(ratname, rattex, hp);
             ratfile.close();
         }
         allfile.close();
     }
 
 private:
-    Cage &cage;
-    std::vector<Rat> children;
+    Cage* cage;
+    std::vector<Rat*> children;
     std::default_random_engine rnd;
     std::uniform_real_distribution<double> dist;
+
+    void feed(Rat* rat) {
+        //find food in cage to give to rat
+        rat->eat(cage->getFood(100-rat->hunger));
+    }
 };
 
 #endif //RATCARE_RATMANAGER_H

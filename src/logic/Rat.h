@@ -6,6 +6,9 @@
 
 class Rat {
 public:
+    int hunger = default_hp;
+    int happiness = 0;
+
     explicit Rat(std::string name, Node node, std::string filename) : name(std::move(name)), ratNode(std::move(node)), texFilename(std::move(filename)) {
         rootNode.addChild(&ratNode);
         ratModel = Model(std::filesystem::absolute(texFilename));
@@ -28,6 +31,7 @@ public:
         std::string ratFilename = name;
         ratfile.open(ratFilename, std::ios::trunc);
         ratfile << texFilename << std::endl;
+        ratfile << hunger << std::endl;
         ratfile.close();
     }
 
@@ -35,9 +39,15 @@ public:
         return name;
     }
 
+    void beginDay() {
+        hunger -= 100;
+    }
+
+    void eat(int hp) {
+        hunger += hp;
+    }
+
 private:
-    int hunger = 0;
-    int happiness = 0;
     std::string name;
     std::string texFilename;
     Model ratModel;

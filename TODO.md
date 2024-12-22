@@ -30,3 +30,4 @@
     - [ ] food class
     - [ ] toy class
     - [ ] decor class
+- [ ] Fix time management for changing calendar years

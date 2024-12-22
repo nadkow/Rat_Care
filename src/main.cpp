@@ -57,7 +57,7 @@ float lastFrame = 0.0f; // Time of last frame
 float currentFrame;
 
 Cage cage;
-RatManager ratManager(cage);
+RatManager ratManager(&cage);
 
 int main(int, char **) {
 
@@ -72,7 +72,7 @@ int main(int, char **) {
 
     // Shader reflectShader("res/shaders/basic.vert", "res/shaders/reflect.frag");
     // Shader refractShader("res/shaders/basic.vert", "res/shaders/refract.frag");
-    ratManager.init(dtm::hour);
+    ratManager.init(dtm::newDay);
     //ratManager.createRat("moomoo");
     ratManager.loadRats();
 

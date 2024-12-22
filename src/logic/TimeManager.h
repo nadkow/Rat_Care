@@ -29,7 +29,13 @@ namespace dtm {
         time (&rawtime);
         timeinfo = localtime(&rawtime);
         hour = timeinfo->tm_hour;
-        if (day == timeinfo->tm_yday || day == 0) newDay = false;
+        if (day == 0) {
+            newDay = false;
+            daysPassed = 0;
+            day = timeinfo->tm_yday;
+            spdlog::info("Welcome!");
+        }
+        if (day == timeinfo->tm_yday) newDay = false;
         // only counts days passed if it's not the first run and the day has changed
         else {
             newDay = true;

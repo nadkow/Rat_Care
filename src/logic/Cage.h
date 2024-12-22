@@ -72,13 +72,28 @@ public:
         glBindVertexArray(groundVAO);
         glBindTexture(GL_TEXTURE_2D, groundTexture);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        for (auto child : objects) {
-            child.draw();
+        for (auto child : foods) {
+            child->draw();
         }
     }
 
+    int getFood(int req_hp) {
+        // returns the amount of hp that is available <= requested hp
+        // and subtracts hp from the chosen food object
+        int collected_hp;
+        for (auto child : foods) {
+            collected_hp += child->tryGet(req_hp-collected_hp);
+            if (child->hp == 0) {
+                auto it = std::remove(foods.begin(), foods.end(), child);
+                foods.erase(it, foods.end());
+            }
+        }
+        return collected_hp;
+    }
+
 private:
-    std::vector<Cage> objects;
+    std::vector<Food*> foods;
+    std::vector<Object*> decor;
     unsigned int groundVAO, groundVBO;
     unsigned int groundTexture;
 };
