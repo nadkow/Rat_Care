@@ -22,6 +22,7 @@ constexpr int32_t GL_VERSION_MINOR = 6;
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <yaml-cpp/yaml.h>
 #include "logic/Node.h"
 #include "rendering/Model.h"
 #include "rendering/Shader.h"
