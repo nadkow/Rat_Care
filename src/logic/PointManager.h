@@ -5,6 +5,14 @@ namespace pm {
 
     int points;
 
+    void buy(int cost) {
+        if (cost > points) {
+            // can't buy
+        } else {
+            points -= cost;
+        }
+    }
+
     void load() {
         std::ifstream allfile;
         allfile.open("wallet", std::ios::in);

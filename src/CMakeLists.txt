@@ -27,7 +27,8 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		logic/Object.h
         logic/TimeManager.h
         logic/PointManager.h
-		rendering/GuiManager.h)
+		rendering/GuiManager.h
+		logic/TaskManager.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

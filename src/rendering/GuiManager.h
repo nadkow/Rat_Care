@@ -123,6 +123,25 @@ namespace gui {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
                     ImGui::GetIO().Framerate);
         ImGui::End();
+
+
+        ImGui::Begin("Shop");
+
+        ImGui::Text("strawberry 100 hp");
+        if (ImGui::Button("100 pts")) pm::buy(100);
+
+        ImGui::End();
+
+
+        ImGui::Begin("Tasks");
+
+        for (int i = 0; i < tasks::noOfTasks ; i++) {
+            ImGui::Checkbox(tasks::getKey(i).c_str(), &tasks::switches[i]);
+        }
+
+        ImGui::End();
+
+
     }
 
     void imgui_end() {

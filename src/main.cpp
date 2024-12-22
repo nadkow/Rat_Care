@@ -30,6 +30,7 @@ constexpr int32_t GL_VERSION_MINOR = 6;
 #include "logic/TimeManager.h"
 #include "rendering/Skybox.h"
 #include "logic/PointManager.h"
+#include "logic/TaskManager.h"
 #include "rendering/GuiManager.h"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
@@ -66,6 +67,7 @@ int main(int, char **) {
     dtm::init();
     init_skybox(dtm::hour);
     pm::load();
+    tasks::init(dtm::day, dtm::hour);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
