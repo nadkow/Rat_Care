@@ -13,6 +13,10 @@ namespace pm {
         }
     }
 
+    void earn(int pts) {
+        points += pts;
+    }
+
     void load() {
         std::ifstream allfile;
         allfile.open("wallet", std::ios::in);

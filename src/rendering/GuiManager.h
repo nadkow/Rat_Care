@@ -136,11 +136,13 @@ namespace gui {
         ImGui::Begin("Tasks");
 
         for (int i = 0; i < tasks::noOfTasks ; i++) {
-            ImGui::Checkbox(tasks::getKey(i).c_str(), &tasks::switches[i]);
+            if(ImGui::Selectable(tasks::getKey(i).c_str(), &tasks::switches[i], tasks::switches[i] ? ImGuiSelectableFlags_Disabled : 0)) {
+                // if the task hasn't been marked already
+                pm::earn(tasks::getPoints(i));
+            }
         }
 
         ImGui::End();
-
 
     }
 

@@ -67,7 +67,7 @@ int main(int, char **) {
     dtm::init();
     init_skybox(dtm::hour);
     pm::load();
-    tasks::init(dtm::day, dtm::hour);
+    tasks::init(dtm::newDay, dtm::hour);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -101,6 +101,7 @@ int main(int, char **) {
     ratManager.saveRats();
     dtm::save();
     pm::save();
+    tasks::saveState();
     gui::terminate();
 
     return 0;

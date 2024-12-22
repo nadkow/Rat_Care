@@ -8,19 +8,26 @@ namespace tasks {
     YAML::Node taskfile;
     bool* switches;
 
-    void init(int currDay, int currHour) {
+    void init(bool isNewDay, int currHour) {
         taskfile = YAML::LoadFile(file);
-        if (taskfile["lastCompletedDay"].as<int>() != currDay) {
-            noOfTasks = taskfile["daily"].size();
-            switches = new bool[noOfTasks];
+        noOfTasks = taskfile["daily"].size();
+        switches = new bool[noOfTasks];
+        if (isNewDay) {
+            // reset all tasks for a new day
             for (int i = 0; i < noOfTasks; i++) {
                 switches[i] = false;
+            }
+        } else {
+            for (int i = 0; i < noOfTasks; i++) {
+                switches[i] = taskfile["daily"][i]["completed"].as<bool>();
             }
         }
     }
 
-    void endDay() {
-        taskfile["lastCompletedDay"] = dtm::day;
+    void saveState() {
+        for (int i = 0; i < noOfTasks; i++) {
+            taskfile["daily"][i]["completed"] = switches[i];
+        }
         std::ofstream fout(file);
         fout << taskfile;
         fout.close();
@@ -28,6 +35,10 @@ namespace tasks {
 
     std::string getKey(int item) {
         return taskfile["daily"][item]["title"].as<std::string>();
+    }
+
+    int getPoints(int item) {
+        return taskfile["daily"][item]["points"].as<int>();
     }
 
 }

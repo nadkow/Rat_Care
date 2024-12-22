@@ -6,7 +6,7 @@ namespace dtm {
     int hour;
     int day; // 0-365 current day
     int daysPassed = 0;
-    bool newDay;
+    bool newDay = false; // whether it's the first run of the day (resets at 4 AM)
 
     void load() {
         std::ifstream allfile;
@@ -30,14 +30,13 @@ namespace dtm {
         timeinfo = localtime(&rawtime);
         hour = timeinfo->tm_hour;
         if (day == 0) {
-            newDay = false;
+            newDay = true;
             daysPassed = 0;
-            day = timeinfo->tm_yday;
+            day = timeinfo->tm_yday - 1;
             spdlog::info("Welcome!");
         }
-        if (day == timeinfo->tm_yday) newDay = false;
         // only counts days passed if it's not the first run and the day has changed
-        else {
+        if (day != timeinfo->tm_yday && hour > 3) {
             newDay = true;
             daysPassed = timeinfo->tm_yday - day;
             day = timeinfo->tm_yday;
@@ -46,10 +45,12 @@ namespace dtm {
     }
 
     void save() {
-        std::ofstream allfile;
-        allfile.open("save", std::ios::trunc);
-        allfile << day << std::endl;
-        allfile.close();
+        if (newDay) {
+            std::ofstream allfile;
+            allfile.open("save", std::ios::trunc);
+            allfile << day << std::endl;
+            allfile.close();
+        }
     }
 
 }
