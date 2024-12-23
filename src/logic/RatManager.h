@@ -11,9 +11,11 @@ const std::string texFiles[] = {"rat", "rat2", "rat3", "rat4", "rat5"};
 const char allRatFilename[] = "all";
 const int default_hp = 100;
 
+std::default_random_engine rnd;
+std::uniform_real_distribution<double> dist;
+
 #include "Rat.h"
 #include "Cage.h"
-#include <random>
 
 class RatManager {
 public:
@@ -131,8 +133,6 @@ public:
 private:
     Cage* cage;
     std::vector<Rat*> children;
-    std::default_random_engine rnd;
-    std::uniform_real_distribution<double> dist;
 
     void feed(Rat* rat) {
         //find food in cage to give to rat

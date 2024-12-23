@@ -62,8 +62,15 @@ public:
         stbi_image_free(data);
     }
 
-    void addFood(std::string filename, int hp) {
-        Food* newfood = new Food(filename, new Node(), hp);
+    void addFood(const std::string& filename, int hp) {
+        Node* baseNode = new Node();
+        baseNode->translate(dist(rnd) * xsize, .0, dist(rnd) * zsize);
+        Food* newfood = new Food(filename, baseNode, hp);
+        foods.push_back(newfood);
+    }
+
+    void addFood(const std::string& filename, int hp, Node* pos) {
+        Food* newfood = new Food(filename, pos, hp);
         foods.push_back(newfood);
     }
 
@@ -90,6 +97,42 @@ public:
             }
         }
         return collected_hp;
+    }
+
+    void load() {
+        YAML::Node cagefile = YAML::LoadFile("cage.yaml");
+        if (cagefile["foods"]) {
+            // load foods if present
+            for (int i = 0; i < cagefile["foods"].size(); i++) {
+                Node* basenode = new Node();
+                basenode->translate(cagefile["foods"][i]["position"][0].as<double>(), cagefile["foods"][i]["position"][1].as<double>(), cagefile["foods"][i]["position"][2].as<double>());
+                addFood(cagefile["foods"][i]["file"].as<std::string>(), cagefile["foods"][i]["hp"].as<int>(), basenode);
+            }
+        }
+    }
+
+    void save() {
+        YAML::Emitter out;
+        out << YAML::BeginMap;
+        out << YAML::Key << "foods";
+        out << YAML::Value << YAML::BeginSeq;
+
+        for (Food* food : foods) {
+            out << YAML::BeginMap;
+            out << YAML::Key << "file" << YAML::Value << food->filename;
+            out << YAML::Key << "hp" << YAML::Value << food->hp;
+            glm::vec3 transl = food->position->getGlobalTranslation();
+            out << YAML::Key << "position" << YAML::Value;
+            out << YAML::Flow;
+            out << YAML::BeginSeq << transl.x << transl.y << transl.z << YAML::EndSeq;
+            out << YAML::EndMap;
+        }
+
+        out << YAML::EndSeq;
+        out << YAML::EndMap;
+        std::ofstream fout("cage.yaml", std::ios::trunc);
+        fout << out.c_str();
+        fout.close();
     }
 
 private:

@@ -8,10 +8,13 @@ public:
 
     Model model;
     Node* position;
+    std::string filename;
 
     Object(const std::string& filename, Node* pos) {
+        this->filename = filename;
         model = Model(std::filesystem::absolute(filename));
         position = pos;
+        rootNode.addChild(pos);
     }
 
     void draw() {

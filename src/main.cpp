@@ -19,6 +19,7 @@ constexpr int32_t GL_VERSION_MAJOR = 4;
 constexpr int32_t GL_VERSION_MINOR = 6;
 
 #include <ctime>
+#include <random>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -70,6 +71,7 @@ int main(int, char **) {
     pm::load();
     shop::load();
     tasks::init(dtm::newDay, dtm::hour);
+    cage.load();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -101,6 +103,7 @@ int main(int, char **) {
 
     // Save game
     ratManager.saveRats();
+    cage.save();
     dtm::save();
     pm::save();
     tasks::saveState();
