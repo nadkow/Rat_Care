@@ -91,10 +91,6 @@ public:
         int collected_hp;
         for (auto child : foods) {
             collected_hp += child->tryGet(req_hp-collected_hp);
-            if (child->hp == 0) {
-                auto it = std::remove(foods.begin(), foods.end(), child);
-                foods.erase(it, foods.end());
-            }
         }
         return collected_hp;
     }
@@ -118,14 +114,16 @@ public:
         out << YAML::Value << YAML::BeginSeq;
 
         for (Food* food : foods) {
-            out << YAML::BeginMap;
-            out << YAML::Key << "file" << YAML::Value << food->filename;
-            out << YAML::Key << "hp" << YAML::Value << food->hp;
-            glm::vec3 transl = food->position->getGlobalTranslation();
-            out << YAML::Key << "position" << YAML::Value;
-            out << YAML::Flow;
-            out << YAML::BeginSeq << transl.x << transl.y << transl.z << YAML::EndSeq;
-            out << YAML::EndMap;
+            if (food->hp > 0){
+                out << YAML::BeginMap;
+                out << YAML::Key << "file" << YAML::Value << food->filename;
+                out << YAML::Key << "hp" << YAML::Value << food->hp;
+                glm::vec3 transl = food->position->getGlobalTranslation();
+                out << YAML::Key << "position" << YAML::Value;
+                out << YAML::Flow;
+                out << YAML::BeginSeq << transl.x << transl.y << transl.z << YAML::EndSeq;
+                out << YAML::EndMap;
+            }
         }
 
         out << YAML::EndSeq;
