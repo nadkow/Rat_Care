@@ -5,7 +5,6 @@ Shader ratShader;
 Node rootNode;
 const glm::mat4 defaultSceneRotation = glm::rotate(glm::mat4(1.f), .2f, glm::vec3(0, 1, 0));
 const glm::mat4 defaultSceneRotationNeg = glm::rotate(glm::mat4(1.f), -.2f, glm::vec3(0, 1, 0));
-extern glm::mat4 view, projection;
 const int noOfTexs = 5;
 const std::string texFiles[] = {"rat", "rat2", "rat3", "rat4", "rat5"};
 const char allRatFilename[] = "all";
@@ -29,6 +28,7 @@ public:
         ratShader = Shader("res/shaders/model.vert", "res/shaders/model.frag");
         ratShader.use();
         ratShader.setMat4("view", view);
+        ratShader.setVec4("ambientColor", skybox::skycolor);
         cage->init();
 
         if (isNewDay) {

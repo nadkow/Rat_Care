@@ -1,5 +1,10 @@
 #ifndef RATCARE_SKYBOX_H
 #define RATCARE_SKYBOX_H
+
+namespace skybox {
+
+glm::vec4 skycolor;
+
 float skyboxVertices[] = {
         -1.0f, 1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
@@ -86,22 +91,22 @@ void init_buffer_objects() {
     glEnableVertexAttribArray(0);
 }
 
-void init_skybox(int hour) {
+void init(int hour) {
 
     cubemapShader = Shader("res/shaders/cubemap.vert", "res/shaders/cubemap.frag");
     cubemapShader.use();
     cubemapShader.setMat4("view", glm::mat4(glm::mat3(view)));
 
-    double brightness = glm::sin(hour/8.0);
+    double brightness = glm::sin(hour / 8.0);
     spdlog::info("Sky brightness: {}", brightness);
-    glm::vec4 skycolor = glm::vec4(brightness, brightness, .99, 1.0);
+    skycolor = glm::vec4(brightness, brightness, .99, 1.0);
     cubemapShader.setVec4("skycolor", skycolor);
 
     create_textures();
     init_buffer_objects();
 }
 
-void draw_skybox() {
+void draw() {
     cubemapShader.use();
     cubemapShader.setMat4("projection", projection);
 
@@ -112,4 +117,5 @@ void draw_skybox() {
     glDepthMask(GL_TRUE);
 }
 
+}
 #endif //RATCARE_SKYBOX_H

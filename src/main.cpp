@@ -14,9 +14,20 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#endif
+
 const char *glsl_version = "#version 460";
 constexpr int32_t GL_VERSION_MAJOR = 4;
 constexpr int32_t GL_VERSION_MINOR = 6;
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 3.f, 10.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, -3.0f, -10.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 0.996f, 0.08f);
+glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 #include <ctime>
 #include <random>
@@ -24,21 +35,16 @@ constexpr int32_t GL_VERSION_MINOR = 6;
 #include <fstream>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
+#include "rendering/Shader.h"
+#include "rendering/Skybox.h"
 #include "logic/Node.h"
 #include "rendering/Model.h"
-#include "rendering/Shader.h"
 #include "logic/RatManager.h"
 #include "logic/TimeManager.h"
-#include "rendering/Skybox.h"
 #include "logic/PointManager.h"
 #include "logic/TaskManager.h"
 #include "logic/Shop.h"
 #include "rendering/GuiManager.h"
-
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#endif
 
 /** FUNCTIONS **/
 
@@ -47,12 +53,6 @@ void update();
 void render();
 
 /** GLOBAL VARIABLES **/
-
-glm::vec3 cameraPos = glm::vec3(0.0f, 3.f, 10.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, -3.0f, -10.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 0.996f, 0.08f);
-glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 ImVec4 clear_color = ImVec4(0.45f, 0.25f, 0.20f, 1.f);
 
@@ -67,7 +67,7 @@ int main(int, char **) {
 
     if (gui::init()) return EXIT_FAILURE;
     dtm::init();
-    init_skybox(dtm::hour);
+    skybox::init(dtm::hour);
     pm::load();
     shop::load();
     tasks::init(dtm::newDay, dtm::hour);
@@ -121,7 +121,7 @@ void render() {
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    draw_skybox();
+    skybox::draw();
     // draw all rats and cage
     ratManager.draw();
 }

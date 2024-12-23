@@ -10,8 +10,11 @@
 #include "rendering/Mesh.h"
 #include "Shader.h"
 
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#endif
+
 
 unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
 
