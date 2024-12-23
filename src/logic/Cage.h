@@ -62,8 +62,8 @@ public:
         stbi_image_free(data);
     }
 
-    void add_object() {
-
+    void addFood() {
+        
     }
 
     void draw() {

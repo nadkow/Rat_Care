@@ -5,11 +5,12 @@ namespace pm {
 
     int points;
 
-    void buy(int cost) {
+    bool buy(int cost) {
         if (cost > points) {
-            // can't buy
+            return false;
         } else {
             points -= cost;
+            return true;
         }
     }
 

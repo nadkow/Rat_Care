@@ -127,9 +127,10 @@ namespace gui {
 
         ImGui::Begin("Shop");
 
-        ImGui::Text("strawberry 100 hp");
-        if (ImGui::Button("100 pts")) pm::buy(100);
-
+        for (int i = 0; i < shop::noOfFoods; i++){
+            ImGui::Text("%s %d HP", shop::getName(i).c_str(), shop::getHunger(i));
+            if (ImGui::Button(std::format("{} pts", shop::getPrice(i)).c_str())) shop::buyFood(i);
+        }
         ImGui::End();
 
 
