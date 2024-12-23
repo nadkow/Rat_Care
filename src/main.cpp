@@ -81,7 +81,6 @@ int main(int, char **) {
     // Shader refractShader("res/shaders/basic.vert", "res/shaders/refract.frag");
     ratManager.init(dtm::newDay);
     //ratManager.createRat("moomoo");
-    ratManager.loadRats();
 
     // Main loop
     while (!glfwWindowShouldClose(gui::window)) {

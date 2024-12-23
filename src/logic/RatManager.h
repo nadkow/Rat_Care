@@ -31,6 +31,8 @@ public:
         ratShader.setVec4("ambientColor", skybox::skycolor);
         cage->init();
 
+        loadRats();
+
         if (isNewDay) {
             for (auto child : children) {
                 child->beginDay();

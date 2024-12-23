@@ -40,8 +40,9 @@ public:
             hp = 0;
             return req_hp;
         } else {
+            int ret = hp;
             hp = 0;
-            return hp;
+            return ret;
         }
     }
 };

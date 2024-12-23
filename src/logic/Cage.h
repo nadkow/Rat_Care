@@ -88,7 +88,7 @@ public:
     int getFood(int req_hp) {
         // returns the amount of hp that is available <= requested hp
         // and subtracts hp from the chosen food object
-        int collected_hp;
+        int collected_hp = 0;
         for (auto child : foods) {
             collected_hp += child->tryGet(req_hp-collected_hp);
         }
