@@ -1,6 +1,8 @@
 #ifndef RATCARE_SHOP_H
 #define RATCARE_SHOP_H
 
+extern Cage cage;
+
 namespace shop {
 
     const char* file = "wares.yaml";
@@ -24,9 +26,13 @@ namespace shop {
         return waresfile["food"][item]["hunger"].as<int>();
     }
 
+    std::string getFilename(int item) {
+        return waresfile["food"][item]["file"].as<std::string>();
+    }
+
     void buyFood(int item) {
         if (pm::buy(getPrice(item))) {
-            // TODO place food inside cage
+            cage.addFood(getFilename(item), getHunger(item));
         }
     }
 

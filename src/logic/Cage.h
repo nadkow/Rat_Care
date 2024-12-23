@@ -62,8 +62,9 @@ public:
         stbi_image_free(data);
     }
 
-    void addFood() {
-        
+    void addFood(std::string filename, int hp) {
+        Food* newfood = new Food(filename, new Node(), hp);
+        foods.push_back(newfood);
     }
 
     void draw() {
