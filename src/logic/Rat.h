@@ -40,7 +40,7 @@ public:
     }
 
     void beginDay() {
-        hunger -= 100;
+        hunger -= default_hp;
     }
 
     void eat(int hp) {

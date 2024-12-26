@@ -8,7 +8,7 @@ const glm::mat4 defaultSceneRotationNeg = glm::rotate(glm::mat4(1.f), -.2f, glm:
 const int noOfTexs = 5;
 const std::string texFiles[] = {"rat", "rat2", "rat3", "rat4", "rat5"};
 const char allRatFilename[] = "all";
-const int default_hp = 100;
+const int default_hp = 80; // rate at which rats get hungry
 
 std::default_random_engine rnd;
 std::uniform_real_distribution<double> dist;
