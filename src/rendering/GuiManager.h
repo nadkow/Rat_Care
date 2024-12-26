@@ -26,6 +26,12 @@ namespace gui {
         }
     }
 
+    void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+        glViewport(0, 0, width, height);
+        if (height) projection = glm::perspective(glm::radians(45.0f), (float) width / height, 0.1f, 100.0f);
+    }
+
+
     bool init_glfw() {
         // Setup window
         glfwSetErrorCallback(glfw_error_callback);
@@ -104,6 +110,7 @@ namespace gui {
 
         glfwSetInputMode(window, GLFW_CURSOR, cursorModes[1]);
         glfwSetKeyCallback(window, key_callback);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         return 0;
     }
 
@@ -149,14 +156,7 @@ namespace gui {
 
     void imgui_end() {
         ImGui::Render();
-        int display_w, display_h;
         glfwMakeContextCurrent(window);
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-
-        glViewport(0, 0, display_w, display_h);
-
-        if (display_h) projection = glm::perspective(glm::radians(45.0f), (float) display_w / display_h, 0.1f, 100.0f);
-
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
