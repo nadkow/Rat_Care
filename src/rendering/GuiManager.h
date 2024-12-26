@@ -155,7 +155,7 @@ namespace gui {
 
         glViewport(0, 0, display_w, display_h);
 
-        projection = glm::perspective(glm::radians(45.0f), (float) display_w / display_h, 0.1f, 100.0f);
+        if (display_h) projection = glm::perspective(glm::radians(45.0f), (float) display_w / display_h, 0.1f, 100.0f);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
