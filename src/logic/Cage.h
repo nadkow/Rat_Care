@@ -85,12 +85,24 @@ public:
         }
     }
 
+    void deleteFood(Food *ob) {
+        auto it = std::remove(foods.begin(), foods.end(), ob);
+        foods.erase(it, foods.end());
+        delete ob;
+    }
+
     int getFood(int req_hp) {
         // returns the amount of hp that is available <= requested hp
         // and subtracts hp from the chosen food object
         int collected_hp = 0;
+        std::vector<Food*> empties;
         for (auto child : foods) {
             collected_hp += child->tryGet(req_hp-collected_hp);
+            if (child->hp == 0) empties.push_back(child);
+        }
+        // clean up empty foods
+        for (auto empty : empties) {
+            deleteFood(empty);
         }
         return collected_hp;
     }
